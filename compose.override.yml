@@ -1,0 +1,5 @@
+---
+services:
+  fluent-bit:
+    networks:
+      - victoria_metrics_network

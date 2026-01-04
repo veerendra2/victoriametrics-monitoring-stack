@@ -1,0 +1,21 @@
+---
+name: Lint
+
+on:
+  pull_request:
+
+jobs:
+  docker-compose-lint:
+    name: Lint Docker Compose Files
+    runs-on: ubuntu-slim
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Setup dclint
+        run: |
+          npm install --g dclint
+          dclint --version
+      - name: Run dclint
+        run: dclint --config=.dclintrc.yml --recursive stacks

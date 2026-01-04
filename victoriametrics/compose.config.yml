@@ -1,0 +1,16 @@
+---
+configs:
+  scrape.yaml:
+    name: scrape.yaml
+    content: |
+      ---
+      scrape_configs:
+      - job_name: victoriametrics
+        static_configs:
+        - targets:
+          - http://localhost:8428/metrics
+
+      - job_name: fluent-bit
+        static_configs:
+        - targets:
+          - fluent-bit:2021

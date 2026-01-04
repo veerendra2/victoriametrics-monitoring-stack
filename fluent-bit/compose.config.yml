@@ -1,0 +1,22 @@
+---
+configs:
+  fluent-bit.yml:
+    name: fluent-bit.yml
+    content: |
+      pipeline:
+        inputs:
+          - name: node_exporter_metrics
+            path.sysfs: /host/sys
+            path.procfs: /host/proc
+            path.rootfs: /host
+            collector.textfile.path: /host/opt/text_collector
+            tag: node_metrics
+
+          - name: docker
+            tag: docker_metrics
+
+        outputs:
+          - name: prometheus_exporter
+            match_regex: '.*_metrics$'
+            host: 0.0.0.0
+            port: 2021

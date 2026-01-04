@@ -1,0 +1,15 @@
+---
+name: victoriametrics/victoria-logs
+services:
+  victoria-logs:
+    image: victoriametrics/victoria-logs:latest
+    container_name: victoria-logs
+    volumes:
+      - victoria_logs_data:/victoria-logs-data
+    command:
+      - '-storageDataPath=victoria-logs-data'
+    restart: unless-stopped
+    hostname: victoria-logs
+volumes:
+  victoria_logs_data:
+    name: victoria_logs_data

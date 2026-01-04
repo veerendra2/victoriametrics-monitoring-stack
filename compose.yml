@@ -1,0 +1,6 @@
+---
+include:
+  - fluent-bit/compose.yml
+  # - grafana/compose.yml
+  # - victorialogs/compose.yml
+  - victoriametrics/compose.yml
