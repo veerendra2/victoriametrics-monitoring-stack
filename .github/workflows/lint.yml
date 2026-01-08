@@ -13,9 +13,11 @@ jobs:
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
+
       - name: Setup dclint
         run: |
           npm install --g dclint
-          dclint --version
+          echo "[*] dclint version: $(dclint --version)"
+
       - name: Run dclint
-        run: dclint --config=.dclintrc.yml --recursive stacks
+        run: dclint --config=.dclintrc.yml --recursive .

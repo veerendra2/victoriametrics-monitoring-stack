@@ -1,0 +1,21 @@
+---
+name: blackbox-exporter
+include:
+  - compose.config.yml
+services:
+  blackboxexporter:
+    image: prom/blackbox-exporter:latest
+    container_name: blackboxexporter
+    configs:
+      - source: blackbox.yaml
+        target: /config/blackbox.yaml
+    command:
+      - '--config.file=/config/blackbox.yaml'
+    restart: unless-stopped
+    labels:
+      - com.centurylinklabs.watchtower.enable=false
+      - traefik.enable=false
+    user: ${PUID}:${PGID}
+    dns:
+      - 1.1.1.1
+    hostname: blackboxexporter

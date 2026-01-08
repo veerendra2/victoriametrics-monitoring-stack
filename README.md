@@ -2,9 +2,9 @@
 
 > _Good enough observability, minimal complexity, and low resource usage._
 
-A lightweight, Docker Compose–based monitoring and logging stack designed for home servers and edge devices such as Raspberry Pi.
+A lightweight, Docker Compose-based monitoring and logging stack for home servers and edge devices such as Raspberry Pi.
 
-This project replaces traditional Prometheus-based setups with [VictoriaMetrics](https://victoriametrics.com/) for metrics, [Fluent Bit](https://fluentbit.io/) as a unified agent for basic system metrics and log collection, and [VictoriaLogs](https://docs.victoriametrics.com/victorialogs/) for centralized log storage.
+Replace traditional Prometheus-based setups with [VictoriaMetrics](https://victoriametrics.com/) for time series database, [Fluent Bit](https://fluentbit.io/) as a unified agent for basic system metrics and log collection, and [VictoriaLogs](https://docs.victoriametrics.com/victorialogs/) for centralized log storage.
 
 Fluent Bit is used to keep the stack simple by providing an all-in-one metrics and logs push model, but it is not intended to fully replace dedicated exporters such as [node-exporter](https://github.com/prometheus/node_exporter) or [cAdvisor](https://github.com/google/cadvisor). The focus is on minimal resource usage, ease of deployment, and practicality for small-scale environments.
 
@@ -22,7 +22,7 @@ docker compose -f compose.yml up -d
 
 - VictoriaMetrics UI - http://localhost:8428/vmui/
 
-To get single docker compose file, run below
+To get a single docker compose file, run the command below:
 
 ```bash
 docker compose config --no-normalize --no-interpolate --output compose.production.yml

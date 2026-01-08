@@ -1,0 +1,11 @@
+---
+name: speedtest_exporter
+services:
+  speedtest_exporter:
+    image: ghcr.io/veerendra2/speedtest_exporter:latest
+    container_name: speedtest_exporter
+    environment:
+      LOG_ADD_SOURCE: false
+      LOG_FORMAT: console
+    restart: unless-stopped
+    hostname: speedtest_exporter
