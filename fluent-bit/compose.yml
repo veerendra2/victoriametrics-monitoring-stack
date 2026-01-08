@@ -7,14 +7,10 @@ services:
     image: fluent/fluent-bit:latest
     container_name: fluent-bit
     volumes:
-      - /proc:/host/proc
-      - /sys:/host/sys
       - /:/host:ro
     configs:
       - source: fluent-bit.yml
         target: /config/fluent-bit.yml
-    ports:
-      - '2021:2021'
     command:
       - '--config=/config/fluent-bit.yml'
     restart: unless-stopped

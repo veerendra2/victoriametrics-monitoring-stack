@@ -17,17 +17,11 @@ git clone https://github.com/veerendra2/victoriametrics-monitoring-stack.git
 
 cd victoriametrics-monitoring-stack
 
-docker compose -f compose.yml up -d
-```
-
-- VictoriaMetrics UI - http://localhost:8428/vmui/
-
-To get a single docker compose file, run the command below:
-
-```bash
 docker compose config --no-normalize --no-interpolate --output compose.production.yml
 docker compose -f compose.production.yml up -d
 ```
+
+- VictoriaMetrics UI - http://localhost:8428/vmui/
 
 ## Docker Compose Lint
 

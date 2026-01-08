@@ -1,0 +1,103 @@
+configs:
+  fluent-bit.yml:
+    content: |
+      pipeline:
+        inputs:
+          - name: node_exporter_metrics
+            path.rootfs: /host
+            collector.textfile.path: /host/opt/text_collector
+            tag: node_metrics
+
+          - name: docker
+            tag: docker_metrics
+            path.containers: /host/var/lib/docker/containers
+            path.sysfs: /host/sys/fs/cgroup
+
+        outputs:
+          - name: prometheus_exporter
+            match_regex: '.*_metrics$'
+            host: 0.0.0.0
+            port: 2021
+    name: fluent-bit.yml
+  scrape.yaml:
+    content: |
+      ---
+      scrape_configs:
+      - job_name: victoriametrics
+        static_configs:
+        - targets:
+          - http://localhost:8428/metrics
+
+      - job_name: fluent-bit
+        static_configs:
+        - targets:
+          - fluent-bit:2021
+
+      - job_name: speedtest_exporter
+        scrape_interval: 1h
+        scrape_timeout: 2m
+        static_configs:
+        - targets:
+          - speedtest_exporter:8080
+    name: scrape.yaml
+networks:
+  victoria_metrics_network:
+    attachable: true
+    name: victoria_metrics_network
+services:
+  fluent-bit:
+    command:
+      - --config=/config/fluent-bit.yml
+    configs:
+      - source: fluent-bit.yml
+        target: /config/fluent-bit.yml
+    container_name: fluent-bit
+    hostname: fluent-bit
+    image: fluent/fluent-bit:latest
+    networks:
+      victoria_metrics_network: null
+    restart: unless-stopped
+    volumes:
+      - bind:
+          create_host_path: true
+        read_only: true
+        source: /
+        target: /host
+        type: bind
+  speedtest_exporter:
+    container_name: speedtest_exporter
+    environment:
+      LOG_ADD_SOURCE: false
+      LOG_FORMAT: console
+    hostname: speedtest_exporter
+    image: ghcr.io/veerendra2/speedtest_exporter:latest
+    networks:
+      victoria_metrics_network: null
+    restart: unless-stopped
+  victoria-metrics:
+    command:
+      - -promscrape.config=/scrape.yaml
+      - -retentionPeriod=30d
+    configs:
+      - mode: 444
+        source: scrape.yaml
+        target: /scrape.yaml
+    container_name: victoria-metrics
+    hostname: victoria-metrics
+    image: victoriametrics/victoria-metrics:latest
+    networks:
+      victoria_metrics_network: null
+    ports:
+      - mode: ingress
+        protocol: tcp
+        published: "8428"
+        target: 8428
+    restart: unless-stopped
+    volumes:
+      - source: victoria_metrics_data
+        target: /victoria-metrics-data
+        type: volume
+        volume: {}
+volumes:
+  victoria_metrics_data:
+    name: victoria_metrics_data

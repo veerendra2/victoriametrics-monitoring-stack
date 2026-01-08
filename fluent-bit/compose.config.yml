@@ -6,14 +6,14 @@ configs:
       pipeline:
         inputs:
           - name: node_exporter_metrics
-            path.sysfs: /host/sys
-            path.procfs: /host/proc
             path.rootfs: /host
             collector.textfile.path: /host/opt/text_collector
             tag: node_metrics
 
           - name: docker
             tag: docker_metrics
+            path.containers: /host/var/lib/docker/containers
+            path.sysfs: /host/sys/fs/cgroup
 
         outputs:
           - name: prometheus_exporter
