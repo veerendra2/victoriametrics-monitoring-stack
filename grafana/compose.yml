@@ -13,8 +13,6 @@ services:
       - source: datasource.yml
         target: /etc/grafana/provisioning/datasources/datasource.yml
         mode: 444
-    ports:
-      - '3000:3000'
     environment:
       GF_SECURITY_ADMIN_USER: admin
       GF_SECURITY_ADMIN_PASSWORD: changeme
@@ -22,11 +20,13 @@ services:
       GF_AUTH_ANONYMOUS_ENABLED: true
       GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
       GF_INSTALL_PLUGINS: victoriametrics-logs-datasource
+    ports:
+      - '3000:3000'
     networks:
       - grafana_network
     restart: unless-stopped
-    hostname: grafana
     cpus: 0.5
+    hostname: grafana
     mem_limit: 512m
     mem_reservation: 300m
 

@@ -21,8 +21,8 @@ services:
       - '-promscrape.config=/scrape.yaml'
       - '-retentionPeriod=30d'
     restart: unless-stopped
-    hostname: victoria-metrics
     cpus: 0.5
+    hostname: victoria-metrics
     mem_limit: 256m
     mem_reservation: 64m
 

@@ -13,8 +13,8 @@ services:
     command:
       - '-storageDataPath=/victoria-logs-data'
     restart: unless-stopped
-    hostname: victoria-logs
     cpus: 0.5
+    hostname: victoria-logs
     mem_limit: 128m
     mem_reservation: 48m
 

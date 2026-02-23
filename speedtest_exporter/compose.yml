@@ -10,8 +10,8 @@ services:
     networks:
       - speedtest_network
     restart: unless-stopped
-    hostname: speedtest_exporter
     cpus: 1.0
+    hostname: speedtest_exporter
     mem_limit: 64m
     mem_reservation: 16m
 
