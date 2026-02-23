@@ -1,15 +1,28 @@
 ---
-name: victoriametrics/victoria-logs
+name: victoria-logs
 services:
   victoria-logs:
     image: victoriametrics/victoria-logs:latest
     container_name: victoria-logs
     volumes:
       - victoria_logs_data:/victoria-logs-data
+    ports:
+      - '9428:9428'
+    networks:
+      - victoria_logs_network
     command:
-      - '-storageDataPath=victoria-logs-data'
+      - '-storageDataPath=/victoria-logs-data'
     restart: unless-stopped
     hostname: victoria-logs
+    cpus: 0.5
+    mem_limit: 128m
+    mem_reservation: 48m
+
+networks:
+  victoria_logs_network:
+    name: victoria_logs_network
+    attachable: true
+
 volumes:
   victoria_logs_data:
     name: victoria_logs_data

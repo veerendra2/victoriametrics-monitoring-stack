@@ -3,20 +3,134 @@ configs:
   fluent-bit.yml:
     name: fluent-bit.yml
     content: |
+      service:
+        parsers_file: /fluent-bit/etc/parsers.conf
+
       pipeline:
         inputs:
+          # --- Metrics ---
           - name: node_exporter_metrics
+            tag: node_metrics
             path.rootfs: /host
             collector.textfile.path: /host/opt/text_collector
-            tag: node_metrics
+            metrics: cpu,cpufreq,meminfo,diskstats,filesystem,uname,stat,time,loadavg,vmstat,netdev,netstat,sockstat,filefd,nvme,thermal_zone,hwmon
 
           - name: docker
             tag: docker_metrics
+            interval_sec: 5
             path.containers: /host/var/lib/docker/containers
             path.sysfs: /host/sys/fs/cgroup
 
+          # --- Host logs ---
+          - name: tail
+            tag: host.syslog
+            path: /host/var/log/syslog
+            db: /tmp/fb_syslog.db
+            read_from_head: false
+            skip_empty_lines: true
+
+          - name: tail
+            tag: host.kern
+            path: /host/var/log/kern.log
+            db: /tmp/fb_kern.db
+            read_from_head: false
+            skip_empty_lines: true
+
+          - name: tail
+            tag: host.auth
+            path: /host/var/log/auth.log
+            db: /tmp/fb_auth.db
+            read_from_head: false
+            skip_empty_lines: true
+
+          # --- Docker container logs ---
+          - name: tail
+            tag: docker.containers.*
+            path: /host/var/lib/docker/containers/*/*-json.log
+            db: /tmp/fb_docker_logs.db
+            read_from_head: false
+            skip_empty_lines: true
+            parser: docker
+            docker_mode: true
+
+        filters:
+          # --- Inject log_source into host log records for use as VictoriaLogs stream field ---
+          - name: modify
+            match: host.syslog
+            add: log_source host.syslog
+
+          - name: modify
+            match: host.kern
+            add: log_source host.kern
+
+          - name: modify
+            match: host.auth
+            add: log_source host.auth
+
+          # --- Inject log_source into docker container log records ---
+          - name: modify
+            match: docker.containers.*
+            add: log_source docker.containers
+
+          # --- Docker container metrics filters ---
+          - name: log_to_metrics
+            match: docker_metrics
+            tag: docker_prom_metrics
+            metric_mode: gauge
+            metric_namespace: docker
+            metric_subsystem: container
+            metric_name: cpu_used
+            metric_description: Total CPU usage in microseconds (cgroup v2 usage_usec; nanoseconds on cgroup v1)
+            value_field: cpu_used
+            label_field: [id, name]
+
+          - name: log_to_metrics
+            match: docker_metrics
+            tag: docker_prom_metrics
+            metric_mode: gauge
+            metric_namespace: docker
+            metric_subsystem: container
+            metric_name: mem_used
+            metric_description: Memory usage in bytes
+            value_field: mem_used
+            label_field: [id, name]
+
+          - name: log_to_metrics
+            match: docker_metrics
+            tag: docker_prom_metrics
+            metric_mode: gauge
+            metric_namespace: docker
+            metric_subsystem: container
+            metric_name: mem_limit
+            metric_description: Memory limit in bytes
+            value_field: mem_limit
+            label_field: [id, name]
+
         outputs:
+          # --- Prometheus metrics endpoint scraped by VictoriaMetrics ---
           - name: prometheus_exporter
             match_regex: '.*_metrics$'
             host: 0.0.0.0
             port: 2021
+
+          # --- Push host logs to VictoriaLogs ---
+          # Raw tail records store the line in "log"; log_source injected by modify filter above
+          - name: http
+            match: host.*
+            host: victoria-logs
+            port: 9428
+            uri: /insert/jsonline?_stream_fields=log_source&_msg_field=log&_time_field=date
+            format: json_lines
+            json_date_format: iso8601
+            compress: gzip
+
+          # --- Push docker container logs to VictoriaLogs ---
+          # Docker json logs have "log", "stream", "time" fields; log_source from modify filter
+          - name: http
+            match: docker.containers.*
+            host: victoria-logs
+            port: 9428
+            uri: /insert/jsonline?_stream_fields=log_source,stream&_msg_field=log&_time_field=time
+            format: json_lines
+            json_date_format: iso8601
+            compress: gzip

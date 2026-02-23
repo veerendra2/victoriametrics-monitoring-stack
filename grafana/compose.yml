@@ -1,38 +1,40 @@
+---
+name: grafana
+include:
+  - compose.config.yml
+
 services:
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
-    depends_on:
-      init-prepare-volumes:
-        condition: service_completed_successfully
-      prometheus:
-        condition: service_started
     volumes:
       - grafana_data:/var/lib/grafana
-      - dashboards:/etc/grafana/dashboards
     configs:
-      - source: dashboard.yml
-        target: /etc/grafana/provisioning/dashboards/dashboard.yml
-        mode: 444
       - source: datasource.yml
         target: /etc/grafana/provisioning/datasources/datasource.yml
         mode: 444
+    ports:
+      - '3000:3000'
     environment:
       GF_SECURITY_ADMIN_USER: admin
       GF_SECURITY_ADMIN_PASSWORD: changeme
       GF_USERS_ALLOW_SIGN_UP: false
-      # GF_SERVER_ROOT_URL: "%(protocol)s://%(domain)s:%(http_port)s/grafana/"
-      GF_INSTALL_PLUGINS: flant-statusmap-panel,ae3e-plotly-panel,marcusolsson-dynamictext-panel
-      GF_SERVE_FROM_SUB_PATH: true
       GF_AUTH_ANONYMOUS_ENABLED: true
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+      GF_INSTALL_PLUGINS: victoriametrics-logs-datasource
     networks:
-      - traefik_public_network
-      - monitoring
+      - grafana_network
     restart: unless-stopped
     hostname: grafana
+    cpus: 0.5
+    mem_limit: 512m
+    mem_reservation: 300m
+
 networks:
-  monitoring:
-    name: monitoring
+  grafana_network:
+    name: grafana_network
     attachable: true
-  traefik_public_network:
-    external: true
+
+volumes:
+  grafana_data:
+    name: grafana_data

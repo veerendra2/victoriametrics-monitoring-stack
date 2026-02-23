@@ -16,3 +16,13 @@ services:
       - '--config=/config/fluent-bit.yml'
     restart: unless-stopped
     hostname: fluent-bit
+    cpus: 0.5
+    mem_limit: 64m
+    mem_reservation: 16m
+    networks:
+      - victoria_logs_network
+
+networks:
+  victoria_logs_network:
+    name: victoria_logs_network
+    external: true

@@ -1,7 +1,5 @@
 # Victoriametrics Monitoring Stack
 
-> _Good enough observability, minimal complexity, and low resource usage._
-
 A lightweight, Docker Compose-based monitoring and logging stack for home servers and edge devices such as Raspberry Pi.
 
 Replace traditional Prometheus-based setups with [VictoriaMetrics](https://victoriametrics.com/) for time series database, [Fluent Bit](https://fluentbit.io/) as a unified agent for basic system metrics and log collection, and [VictoriaLogs](https://docs.victoriametrics.com/victorialogs/) for centralized log storage.
@@ -35,17 +33,3 @@ dclint --config=.dclintrc.yml --recursive .
 dclint --config=.dclintrc.yml --recursive . --fix
 ```
 
-## Resources
-
-### VictoriaMetrics
-
-- [Scrape config examples](https://docs.victoriametrics.com/victoriametrics/scrape_config_examples/)
-
-### Fluent Bit
-
-- [Node exporter metrics](https://docs.fluentbit.io/manual/data-pipeline/inputs/node-exporter-metrics)
-
-```bash
-# To see available config for input `node_exporter_metrics`
-docker run -it --rm fluent/fluent-bit:latest /fluent-bit/bin/fluent-bit -i node_exporter_metrics -h
-```

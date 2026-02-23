@@ -2,6 +2,7 @@
 name: blackbox-exporter
 include:
   - compose.config.yml
+
 services:
   blackboxexporter:
     image: prom/blackbox-exporter:latest
@@ -9,10 +10,23 @@ services:
     configs:
       - source: blackbox.yaml
         target: /config/blackbox.yaml
+        mode: 444
     command:
       - '--config.file=/config/blackbox.yaml'
+    ports:
+      - '9115:9115'
+    networks:
+      - blackbox_network
     restart: unless-stopped
     user: ${PUID}:${PGID}
     dns:
       - 1.1.1.1
     hostname: blackboxexporter
+    cpus: 0.25
+    mem_limit: 64m
+    mem_reservation: 32m
+
+networks:
+  blackbox_network:
+    name: blackbox_network
+    attachable: true

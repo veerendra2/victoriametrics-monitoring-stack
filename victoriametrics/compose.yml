@@ -22,6 +22,9 @@ services:
       - '-retentionPeriod=30d'
     restart: unless-stopped
     hostname: victoria-metrics
+    cpus: 0.5
+    mem_limit: 256m
+    mem_reservation: 64m
 
 networks:
   victoria_metrics_network:

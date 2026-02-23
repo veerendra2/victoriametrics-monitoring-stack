@@ -8,7 +8,7 @@ configs:
       - job_name: victoriametrics
         static_configs:
         - targets:
-          - http://localhost:8428
+          - localhost:8428
 
       - job_name: fluent-bit
         static_configs:
@@ -21,3 +21,8 @@ configs:
         static_configs:
         - targets:
           - speedtest_exporter:8080
+
+      - job_name: blackbox_exporter
+        static_configs:
+        - targets:
+          - blackboxexporter:9115
