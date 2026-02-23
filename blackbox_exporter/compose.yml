@@ -1,0 +1,32 @@
+---
+name: blackbox-exporter
+include:
+  - compose.config.yml
+
+services:
+  blackboxexporter:
+    image: prom/blackbox-exporter:latest
+    container_name: blackboxexporter
+    configs:
+      - source: blackbox.yaml
+        target: /config/blackbox.yaml
+        mode: 444
+    ports:
+      - '9115:9115'
+    networks:
+      - blackbox_network
+    command:
+      - '--config.file=/config/blackbox.yaml'
+    restart: unless-stopped
+    user: ${PUID}:${PGID}
+    cpus: 0.25
+    dns:
+      - 1.1.1.1
+    hostname: blackboxexporter
+    mem_limit: 64m
+    mem_reservation: 32m
+
+networks:
+  blackbox_network:
+    name: blackbox_network
+    attachable: true

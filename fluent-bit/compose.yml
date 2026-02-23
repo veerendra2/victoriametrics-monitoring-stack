@@ -1,0 +1,28 @@
+---
+name: fluent-bit
+include:
+  - compose.config.yml
+services:
+  fluent-bit:
+    image: fluent/fluent-bit:latest
+    container_name: fluent-bit
+    volumes:
+      - /:/host:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    configs:
+      - source: fluent-bit.yml
+        target: /config/fluent-bit.yml
+    networks:
+      - victoria_logs_network
+    command:
+      - '--config=/config/fluent-bit.yml'
+    restart: unless-stopped
+    cpus: 0.5
+    hostname: fluent-bit
+    mem_limit: 64m
+    mem_reservation: 16m
+
+networks:
+  victoria_logs_network:
+    name: victoria_logs_network
+    external: true

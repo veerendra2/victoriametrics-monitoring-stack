@@ -1,0 +1,25 @@
+---
+services:
+  fluent-bit:
+    networks:
+      - victoria_metrics_network
+      - victoria_logs_network
+
+  speedtest_exporter:
+    networks:
+      - victoria_metrics_network
+
+  blackboxexporter:
+    networks:
+      - victoria_metrics_network
+
+  grafana:
+    networks:
+      - victoria_metrics_network
+      - victoria_logs_network
+
+networks:
+  victoria_metrics_network:
+    name: victoria_metrics_network
+  victoria_logs_network:
+    name: victoria_logs_network

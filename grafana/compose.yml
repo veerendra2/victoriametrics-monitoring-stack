@@ -1,0 +1,40 @@
+---
+name: grafana
+include:
+  - compose.config.yml
+
+services:
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    volumes:
+      - grafana_data:/var/lib/grafana
+    configs:
+      - source: datasource.yml
+        target: /etc/grafana/provisioning/datasources/datasource.yml
+        mode: 444
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: changeme
+      GF_USERS_ALLOW_SIGN_UP: false
+      GF_AUTH_ANONYMOUS_ENABLED: true
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+      GF_INSTALL_PLUGINS: victoriametrics-logs-datasource
+    ports:
+      - '3000:3000'
+    networks:
+      - grafana_network
+    restart: unless-stopped
+    cpus: 0.5
+    hostname: grafana
+    mem_limit: 512m
+    mem_reservation: 300m
+
+networks:
+  grafana_network:
+    name: grafana_network
+    attachable: true
+
+volumes:
+  grafana_data:
+    name: grafana_data

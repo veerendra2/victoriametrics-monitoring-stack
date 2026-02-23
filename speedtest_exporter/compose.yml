@@ -1,0 +1,21 @@
+---
+name: speedtest-exporter
+services:
+  speedtest_exporter:
+    image: ghcr.io/veerendra2/speedtest_exporter:latest
+    container_name: speedtest_exporter
+    environment:
+      LOG_ADD_SOURCE: false
+      LOG_FORMAT: console
+    networks:
+      - speedtest_network
+    restart: unless-stopped
+    cpus: 1.0
+    hostname: speedtest_exporter
+    mem_limit: 64m
+    mem_reservation: 16m
+
+networks:
+  speedtest_network:
+    name: speedtest_network
+    attachable: true
