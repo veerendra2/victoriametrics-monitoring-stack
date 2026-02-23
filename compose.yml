@@ -3,6 +3,6 @@ include:
   # - blackbox_exporter/compose.yml
   - fluent-bit/compose.yml
   # - grafana/compose.yml
-  - speedtest_exporter/compose.yml
+  # - speedtest_exporter/compose.yml
   # - victorialogs/compose.yml
-  - victoriametrics/compose.yml
+  # - victoriametrics/compose.yml

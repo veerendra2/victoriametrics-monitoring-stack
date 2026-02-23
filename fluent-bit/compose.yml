@@ -8,6 +8,7 @@ services:
     container_name: fluent-bit
     volumes:
       - /:/host:ro
+      - /var/run/docker.sock:/var/run/docker.sock
     configs:
       - source: fluent-bit.yml
         target: /config/fluent-bit.yml

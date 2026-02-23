@@ -1,0 +1,38 @@
+services:
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    depends_on:
+      init-prepare-volumes:
+        condition: service_completed_successfully
+      prometheus:
+        condition: service_started
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - dashboards:/etc/grafana/dashboards
+    configs:
+      - source: dashboard.yml
+        target: /etc/grafana/provisioning/dashboards/dashboard.yml
+        mode: 444
+      - source: datasource.yml
+        target: /etc/grafana/provisioning/datasources/datasource.yml
+        mode: 444
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: changeme
+      GF_USERS_ALLOW_SIGN_UP: false
+      # GF_SERVER_ROOT_URL: "%(protocol)s://%(domain)s:%(http_port)s/grafana/"
+      GF_INSTALL_PLUGINS: flant-statusmap-panel,ae3e-plotly-panel,marcusolsson-dynamictext-panel
+      GF_SERVE_FROM_SUB_PATH: true
+      GF_AUTH_ANONYMOUS_ENABLED: true
+    networks:
+      - traefik_public_network
+      - monitoring
+    restart: unless-stopped
+    hostname: grafana
+networks:
+  monitoring:
+    name: monitoring
+    attachable: true
+  traefik_public_network:
+    external: true

@@ -1,12 +1,12 @@
----
-services:
-  fluent-bit:
-    networks:
-      - victoria_metrics_network
+# ---
+# services:
+#   fluent-bit:
+#     networks:
+#       - victoria_metrics_network
 
-  speedtest_exporter:
-    networks:
-      - victoria_metrics_network
+#   speedtest_exporter:
+#     networks:
+#       - victoria_metrics_network
 
   # blackbox_exporter:
   #   networks:
