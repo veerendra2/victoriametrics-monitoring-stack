@@ -6,13 +6,11 @@ configs:
       apiVersion: 1
       datasources:
         - name: VictoriaMetrics
-          type: prometheus
+          type: victoriametrics-metrics-datasource
           uid: victoriametrics
           access: proxy
           url: http://victoria-metrics:8428
           isDefault: true
-          jsonData:
-            timeInterval: 15s
 
         - name: VictoriaLogs
           type: victoriametrics-logs-datasource
