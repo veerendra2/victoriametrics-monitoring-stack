@@ -12,7 +12,7 @@ configs:
           - name: node_exporter_metrics
             tag: node_metrics
             path.rootfs: /host
-            collector.textfile.path: /host/opt/text_collector
+            collector.textfile.path: /opt/text_collector
             collector.textfile.scrape_interval: 900
             scrape_interval: 30
             metrics: cpu,cpufreq,meminfo,diskstats,filesystem,uname,stat,time,loadavg,vmstat,netdev,netstat,sockstat,filefd,nvme,thermal_zone,hwmon,processes,textfile

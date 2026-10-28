@@ -8,6 +8,15 @@ Fluent Bit is used to keep the stack simple by providing an all-in-one metrics a
 
 The stack is optimized for ARM architectures and low-power hardware, making it ideal for home labs, Raspberry Pi clusters, and small self-hosted servers.
 
+## Fluent Bit as node-exporter / cAdvisor replacement — caveats
+
+Fluent Bit is not a drop-in replacement. See [Replacing node-exporter and cAdvisor with Fluent Bit](https://veerendra2.github.io/migrating-to-victoriametrics-part1/#replacing-node-exporter-and-cadvisor-with-fluentbit) for the full write-up.
+
+- **Node metrics are a subset** of node_exporter — not full parity.
+- **Docker stats are log records**, not Prometheus metrics; `log_to_metrics` converts them.
+- **`log_to_metrics` counter mode is a trap** — it ignores `value_field` and increments by 1. Cumulative CPU/memory must be exposed as `gauge`.
+- **Container CPU differs slightly from cAdvisor** (Fluent Bit reads higher). `rate()`/`increase()` do not fully reconcile them; the difference comes from cgroup v1 vs v2 CPU accounting. Memory is a close match.
+
 ## Deploy
 
 ```bash

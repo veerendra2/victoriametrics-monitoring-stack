@@ -13,8 +13,6 @@ services:
         mode: 444
     ports:
       - '9115:9115'
-    networks:
-      - blackbox_network
     command:
       - '--config.file=/config/blackbox.yaml'
     restart: unless-stopped

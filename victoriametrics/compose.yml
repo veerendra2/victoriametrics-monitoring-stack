@@ -13,6 +13,9 @@ services:
       - source: scrape.yaml
         target: /scrape.yaml
         mode: 444
+      - source: pinghosts.yml
+        target: /pinghosts.yml
+        mode: 444
     ports:
       - '8428:8428'
     networks:
