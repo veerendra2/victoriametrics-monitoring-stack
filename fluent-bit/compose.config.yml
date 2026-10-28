@@ -12,12 +12,14 @@ configs:
           - name: node_exporter_metrics
             tag: node_metrics
             path.rootfs: /host
-            collector.textfile.path: /host/opt/text_collector
-            metrics: cpu,cpufreq,meminfo,diskstats,filesystem,uname,stat,time,loadavg,vmstat,netdev,netstat,sockstat,filefd,nvme,thermal_zone,hwmon
+            collector.textfile.path: /opt/text_collector
+            collector.textfile.scrape_interval: 900
+            scrape_interval: 30
+            metrics: cpu,cpufreq,meminfo,diskstats,filesystem,uname,stat,time,loadavg,vmstat,netdev,netstat,sockstat,filefd,nvme,thermal_zone,hwmon,processes,textfile
 
           - name: docker
             tag: docker_metrics
-            interval_sec: 5
+            interval_sec: 15
             path.containers: /host/var/lib/docker/containers
             path.sysfs: /host/sys/fs/cgroup
 
@@ -54,6 +56,18 @@ configs:
             docker_mode: true
 
         filters:
+          # --- Lua filter to clean up container names ---
+          - name: lua
+            match: docker_metrics
+            call: strip_leading_slash
+            code: |
+              function strip_leading_slash(tag, timestamp, record)
+                if record["name"] then
+                  record["name"] = record["name"]:gsub("^/", "")
+                end
+                return 1, timestamp, record
+              end
+
           # --- Inject log_source into host log records for use as VictoriaLogs stream field ---
           - name: modify
             match: host.syslog

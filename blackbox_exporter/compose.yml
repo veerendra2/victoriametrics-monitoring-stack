@@ -13,8 +13,6 @@ services:
         mode: 444
     ports:
       - '9115:9115'
-    networks:
-      - blackbox_network
     command:
       - '--config.file=/config/blackbox.yaml'
     restart: unless-stopped
@@ -25,8 +23,3 @@ services:
     hostname: blackboxexporter
     mem_limit: 64m
     mem_reservation: 32m
-
-networks:
-  blackbox_network:
-    name: blackbox_network
-    attachable: true

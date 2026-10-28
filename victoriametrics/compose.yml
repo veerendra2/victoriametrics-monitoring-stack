@@ -13,6 +13,9 @@ services:
       - source: scrape.yaml
         target: /scrape.yaml
         mode: 444
+      - source: pinghosts.yml
+        target: /pinghosts.yml
+        mode: 444
     ports:
       - '8428:8428'
     networks:
@@ -20,6 +23,10 @@ services:
     command:
       - '-promscrape.config=/scrape.yaml'
       - '-retentionPeriod=30d'
+      - '-smallMergeConcurrency=1'
+      - '-bigMergeConcurrency=1'
+      - '-memory.allowedPercent=70'
+      - '-dedup.minScrapeInterval=30s'
     restart: unless-stopped
     cpus: 0.5
     hostname: victoria-metrics

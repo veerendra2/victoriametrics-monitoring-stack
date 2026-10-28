@@ -21,8 +21,3 @@ services:
     hostname: fluent-bit
     mem_limit: 64m
     mem_reservation: 16m
-
-networks:
-  victoria_logs_network:
-    name: victoria_logs_network
-    external: true

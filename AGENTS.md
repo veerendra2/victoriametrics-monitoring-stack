@@ -180,7 +180,6 @@ user: ${PUID}:${PGID}
 - `victoria_metrics_network` — scrape network; attachable so external stacks can join
 - `victoria_logs_network` — log ingestion network; attachable for Fluent Bit and other log shippers
 - `grafana_network` — Grafana internal network connecting Grafana to VictoriaMetrics and VictoriaLogs
-- `blackbox_network` — Blackbox Exporter network
 - `speedtest_network` — Speedtest Exporter network
 - `traefik_public_network` — external, managed by a separate Traefik stack (optional; declared external)
 
